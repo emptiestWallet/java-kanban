@@ -14,29 +14,17 @@ public class TaskTracker {
     private HashMap<Long, Epic> epics = new HashMap<>();
     private long generatorId = 0;
 
-    public List<Task> getAllTasks() {
-        return new ArrayList<>(tasks.values());
-    }
+    public List<Task> getAllTasks() { return new ArrayList<>(tasks.values()); }
 
-    public List<Subtask> getAllSubtasks() {
-        return new ArrayList<>(subtasks.values());
-    }
+    public List<Subtask> getAllSubtasks() { return new ArrayList<>(subtasks.values()); }
 
-    public List<Epic> getAllEpics() {
-        return new ArrayList<>(epics.values());
-    }
+    public List<Epic> getAllEpics() { return new ArrayList<>(epics.values()); }
 
-    public Task getTaskById(Long taskId) {
-        return tasks.get(taskId);
-    }
+    public Task getTaskById(Long taskId) { return tasks.get(taskId); }
 
-    public Subtask getSubtaskById(Long subtaskId) {
-        return subtasks.get(subtaskId);
-    }
+    public Subtask getSubtaskById(Long subtaskId) { return subtasks.get(subtaskId); }
 
-    public Epic getEpicById(Long epicId) {
-        return epics.get(epicId);
-    }
+    public Epic getEpicById(Long epicId) { return epics.get(epicId); }
 
     public long addNewTask(Task task) {
         long id = generateId();
@@ -174,7 +162,5 @@ public class TaskTracker {
         return subtasksOfEpic;
     }
 
-    private long generateId() {
-        return generatorId++;
-    }
+    private long generateId() { return generatorId++; }
 }

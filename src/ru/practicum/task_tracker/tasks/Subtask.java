@@ -1,6 +1,5 @@
 package ru.practicum.task_tracker.tasks;
 
-
 import java.util.Objects;
 
 public class Subtask extends Task {
