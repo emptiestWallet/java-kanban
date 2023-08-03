@@ -20,8 +20,7 @@ public class Task {
     @Override
     public boolean equals(Object obj) {
         if (this == obj) return true;
-        if (obj == null) return false;
-        if (this.getClass() != obj.getClass()) return false;
+        if ((obj == null) || this.getClass() != obj.getClass()) return false;
         Task anotherTask = (Task) obj;
         return Objects.equals(id, anotherTask.id)
                 && Objects.equals(name, anotherTask.name)
