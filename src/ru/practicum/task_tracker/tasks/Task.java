@@ -6,9 +6,9 @@ public class Task {
     protected Long id;
     protected String name;
     protected String description;
-    protected String status;
+    protected TaskStatus status;
 
-    public Task(String name, String description, String status) {
+    public Task(String name, String description, TaskStatus status) {
         this.name = name;
         this.description = description;
         this.status = status;
@@ -42,7 +42,7 @@ public class Task {
 
     public void setId(Long id) { this.id = id; }
 
-    public String getStatus() { return status; }
+    public TaskStatus getStatus() { return status; }
 
-    public void setStatus(String status) { this.status = status; }
+    public void setStatus(TaskStatus status) { this.status = status; }
 }
