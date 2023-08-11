@@ -20,7 +20,7 @@ public class InMemoryHistoryManager implements HistoryManager {
             return;
         }
 
-        if (history.size() > HISTORY_LIMIT) {
+        if (history.size() >= HISTORY_LIMIT) {
             history.remove(0);
         }
 
