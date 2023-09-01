@@ -1,11 +1,17 @@
 package ru.practicum.task_tracker.manager;
 
 public class Managers {
+
+    private Managers() {}
+
+    private static final HistoryManager defaultHistoryManager = new InMemoryHistoryManager();
+    private static final TaskTracker defaultTaskManager = new InMemoryTaskTracker(defaultHistoryManager);
+
     public static TaskTracker getDefault() {
-        return new InMemoryTaskTracker();
+        return defaultTaskManager;
     }
 
     public static HistoryManager getDefaultHistory() {
-        return new InMemoryHistoryManager();
+        return defaultHistoryManager;
     }
 }

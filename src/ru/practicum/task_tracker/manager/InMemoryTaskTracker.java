@@ -10,12 +10,15 @@ import java.util.HashMap;
 import java.util.List;
 
 public class InMemoryTaskTracker implements TaskTracker {
-    HistoryManager historyManager = Managers.getDefaultHistory();
-
     private final HashMap<Long, Task> tasks = new HashMap<>();
     private final HashMap<Long, Subtask> subtasks = new HashMap<>();
     private final HashMap<Long, Epic> epics = new HashMap<>();
     private long generatorId = 0;
+    private final HistoryManager historyManager;
+
+    public InMemoryTaskTracker(HistoryManager historyManager) {
+        this.historyManager = historyManager;
+    }
 
     @Override
     public List<Task> getAllTasks() { return new ArrayList<>(tasks.values()); }
@@ -134,19 +137,21 @@ public class InMemoryTaskTracker implements TaskTracker {
         }
 
         tasks.remove(taskId);
+        historyManager.remove(taskId);
     }
 
     @Override
     public void deleteSubtaskById(Long subtaskId) {
-        Subtask subtask = getSubtaskById(subtaskId);
+        Subtask subtask = subtasks.remove(subtaskId);
         if (subtask != null) {
             Epic epic = epics.get(subtask.getEpicId());
             if (epic != null) {
                 epic.getSubtaskIds().remove(subtaskId);
             }
 
-            subtasks.remove(subtaskId);
             updateEpicStatus(subtask.getEpicId());
+
+            historyManager.remove(subtaskId);
         }
     }
 
@@ -167,7 +172,10 @@ public class InMemoryTaskTracker implements TaskTracker {
 
         for (Long subtaskId : subtasksToRemove) {
             subtasks.remove(subtaskId);
+            historyManager.remove(subtaskId);
         }
+
+        historyManager.remove(epicId);
     }
 
     @Override

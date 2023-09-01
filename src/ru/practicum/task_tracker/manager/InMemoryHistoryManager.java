@@ -2,28 +2,91 @@ package ru.practicum.task_tracker.manager;
 
 import ru.practicum.task_tracker.tasks.Task;
 
+import java.util.HashMap;
 import java.util.List;
 import java.util.ArrayList;
+import java.util.Map;
 
 public class InMemoryHistoryManager implements HistoryManager {
-    private final List<Task> history = new ArrayList<>();
-    private static final int HISTORY_LIMIT = 10;
+    private final Map<Long, Node> taskNodeMap = new HashMap<>();
+    private Node first;
+    private Node last;
 
     @Override
     public List<Task> getHistory() {
-        return new ArrayList<>(history);
+        return getTasks();
     }
 
     @Override
     public void addTaskToHistory(Task task) {
-        if (task == null) {
+        if (task == null || task.getId() == null) {
             return;
         }
 
-        if (history.size() >= HISTORY_LIMIT) {
-            history.remove(0);
+        long id = task.getId();
+        remove(id);
+        linkLast(task);
+        taskNodeMap.put(id, last);
+    }
+
+    public void remove(long id) {
+        Node node = taskNodeMap.remove(id);
+        if (node == null) {
+            return;
         }
 
-        history.add(task);
+        removeNode(node);
+    }
+
+    public ArrayList<Task> getTasks(){
+        ArrayList<Task> tasks = new ArrayList<>();
+        Node node = first;
+        while (node != null) {
+            tasks.add(node.task);
+            node = node.next;
+        }
+
+        return tasks;
+    }
+
+    public void removeNode(Node node) {
+        if (node.prev != null) {
+            node.prev.next = node.next;
+            if (node.next == null) {
+                last = node.prev;
+            } else {
+                node.next.prev = node.prev;
+            }
+        } else {
+            first = node.next;
+            if (first == null) {
+                last = null;
+            } else {
+                first.prev = null;
+            }
+        }
+    }
+
+    private void linkLast(Task task) {
+        Node newNode = new Node(task, last, null);
+        if (first == null) {
+            first = newNode;
+        } else {
+            last.next = newNode;
+        }
+
+        last = newNode;
+    }
+
+    public static class Node {
+        Task task;
+        Node next;
+        Node prev;
+
+        public Node(Task task, Node prev, Node next) {
+            this.task = task;
+            this.next = next;
+            this.prev = prev;
+        }
     }
 }
