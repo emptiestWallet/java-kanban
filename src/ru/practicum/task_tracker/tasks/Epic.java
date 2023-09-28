@@ -6,8 +6,8 @@ import java.util.Objects;
 public class Epic extends Task {
     ArrayList<Long> subtaskIds;
 
-    public Epic(String name, String description) {
-        super(name, description, TaskStatus.NEW);
+    public Epic(String name, String description, TaskStatus taskStatus) {
+        super(name, description, taskStatus.NEW, TaskTypes.EPIC);
         subtaskIds = new ArrayList<>();
     }
 
@@ -15,16 +15,21 @@ public class Epic extends Task {
 
     public void addSubtaskId(Long subtaskId) { subtaskIds.add(subtaskId); }
 
-    @Override
-    public int hashCode() { return Objects.hash(super.hashCode(), subtaskIds); }
+    public TaskTypes getType() {
+        return TaskTypes.EPIC;
+    }
 
     @Override
-    public boolean equals(Object obj) {
-        if (this == obj) return true;
-        if (obj == null) return false;
-        if (this.getClass() != obj.getClass()) return false;
-        Epic anotherEpic = (Epic) obj;
-        return Objects.equals(subtaskIds, anotherEpic.subtaskIds);
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Epic epic = (Epic) o;
+        return super.equals(epic);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id, type, name, status, description);
     }
 
     @Override

@@ -8,13 +8,31 @@ import ru.practicum.task_tracker.tasks.TaskStatus;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Objects;
 
 public class InMemoryTaskTracker implements TaskTracker {
-    private final HashMap<Long, Task> tasks = new HashMap<>();
-    private final HashMap<Long, Subtask> subtasks = new HashMap<>();
-    private final HashMap<Long, Epic> epics = new HashMap<>();
-    private long generatorId = 0;
-    private final HistoryManager historyManager;
+    public final HashMap<Long, Task> tasks = new HashMap<>();
+    public final HashMap<Long, Subtask> subtasks = new HashMap<>();
+    public final HashMap<Long, Epic> epics = new HashMap<>();
+    public long generatorId = 0;
+    public final HistoryManager historyManager;
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        InMemoryTaskTracker that = (InMemoryTaskTracker) o;
+        return generatorId == that.generatorId &&
+                tasks.equals(that.tasks) &&
+                subtasks.equals(that.subtasks) &&
+                epics.equals(that.epics) &&
+                historyManager.getHistory().equals(that.historyManager.getHistory());
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(tasks, subtasks, epics, generatorId, historyManager);
+    }
 
     public InMemoryTaskTracker(HistoryManager historyManager) {
         this.historyManager = historyManager;
@@ -39,6 +57,10 @@ public class InMemoryTaskTracker implements TaskTracker {
     public Epic getEpicById(Long epicId) { return epics.get(epicId); }
 
     private long generateId() { return generatorId++; }
+
+    public HistoryManager getHistoryManager() {
+        return historyManager;
+    }
 
     @Override
     public long addNewTask(Task task) {
@@ -94,7 +116,7 @@ public class InMemoryTaskTracker implements TaskTracker {
         updateEpicStatus(subtask.getEpicId());
     }
 
-    private void updateEpicStatus(Long epicId) {
+    public void updateEpicStatus(Long epicId) {
         Epic epic = epics.get(epicId);
         ArrayList<Long> subtaskIds = epic.getSubtaskIds();
         if (subtaskIds.isEmpty()) {

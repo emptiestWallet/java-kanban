@@ -5,25 +5,32 @@ import java.util.Objects;
 public class Subtask extends Task {
     private Long epicId;
 
-    public Subtask(String name, String description, TaskStatus status, Long epicId) {
-        super(name, description, status);
+    public Subtask(String name, String description, TaskStatus status, Long epicId, Long id) {
+        super(name, description, status, TaskTypes.SUBTASK);
         this.epicId = epicId;
+        this.id = id;
     }
 
     public Long getEpicId() {
         return epicId;
     }
 
-    @Override
-    public int hashCode() { return Objects.hash(super.hashCode(), epicId); }
+    public TaskTypes getType() {
+        return TaskTypes.SUBTASK;
+    }
 
     @Override
-    public boolean equals(Object obj) {
-        if (this == obj) return true;
-        if (obj == null) return false;
-        if (this.getClass() != obj.getClass()) return false;
-        Subtask anotherSubtask = (Subtask) obj;
-        return Objects.equals(epicId, anotherSubtask.epicId);
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Subtask subtask = (Subtask) o;
+        return super.equals(subtask) &&
+                Objects.equals(epicId, subtask.epicId);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id, type, name, status, description);
     }
 
     @Override
