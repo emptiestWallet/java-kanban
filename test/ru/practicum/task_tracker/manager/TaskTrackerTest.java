@@ -89,7 +89,7 @@ public abstract class TaskTrackerTest<T extends TaskTracker> {
 
         assertNull(taskTracker.getSubtask(subtaskId), "Подзадача должна быть удалена из taskTracker.");
 
-        Epic updatedEpic = (Epic) taskTracker.getEpic(epicId);
+        Epic updatedEpic = taskTracker.getEpic(epicId);
         assertFalse(updatedEpic.getSubtaskIds().contains(subtaskId), "Подзадача должна быть удалена из эпика.");
     }
 
