@@ -39,24 +39,38 @@ public class InMemoryTaskTracker implements TaskTracker {
     }
 
     @Override
-    public List<Task> getAllTasks() { return new ArrayList<>(tasks.values()); }
+    public List<Task> getAllTasks() {
+        return new ArrayList<>(tasks.values());
+    }
 
     @Override
-    public List<Subtask> getAllSubtasks() { return new ArrayList<>(subtasks.values()); }
+    public List<Subtask> getAllSubtasks() {
+        return new ArrayList<>(subtasks.values());
+    }
 
     @Override
-    public List<Epic> getAllEpics() { return new ArrayList<>(epics.values()); }
+    public List<Epic> getAllEpics() {
+        return new ArrayList<>(epics.values());
+    }
 
     @Override
-    public Task getTaskById(Long taskId) { return tasks.get(taskId); }
+    public Task getTaskById(Long taskId) {
+        return tasks.get(taskId);
+    }
 
     @Override
-    public Subtask getSubtaskById(Long subtaskId) { return subtasks.get(subtaskId); }
+    public Subtask getSubtaskById(Long subtaskId) {
+        return subtasks.get(subtaskId);
+    }
 
     @Override
-    public Epic getEpicById(Long epicId) { return epics.get(epicId); }
+    public Epic getEpicById(Long epicId) {
+        return epics.get(epicId);
+    }
 
-    private long generateId() { return generatorId++; }
+    private long generateId() {
+        return generatorId++;
+    }
 
     public HistoryManager getHistoryManager() {
         return historyManager;
@@ -116,6 +130,7 @@ public class InMemoryTaskTracker implements TaskTracker {
         updateEpicStatus(subtask.getEpicId());
     }
 
+    @Override
     public void updateEpicStatus(Long epicId) {
         Epic epic = epics.get(epicId);
         ArrayList<Long> subtaskIds = epic.getSubtaskIds();

@@ -35,6 +35,8 @@ public interface TaskTracker {
 
     void updateSubtask(Subtask subtask);
 
+    void updateEpicStatus(Long epicId);
+
     void deleteTaskById(Long taskId);
 
     void deleteSubtaskById(Long subtaskId);
