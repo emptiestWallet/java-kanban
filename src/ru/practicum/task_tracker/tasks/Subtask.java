@@ -1,9 +1,20 @@
 package ru.practicum.task_tracker.tasks;
 
+import java.time.Duration;
+import java.time.LocalDateTime;
 import java.util.Objects;
 
 public class Subtask extends Task {
     private Long epicId;
+
+    public Subtask(String name, String description, TaskStatus status, Long epicId, Long id, LocalDateTime startTime, Duration duration) {
+        super(name, description, status, TaskTypes.SUBTASK);
+        this.epicId = epicId;
+        this.id = id;
+        this.startTime = startTime;
+        this.duration = duration;
+        this.endTime = getEndTime();
+    }
 
     public Subtask(String name, String description, TaskStatus status, Long epicId, Long id) {
         super(name, description, status, TaskTypes.SUBTASK);
@@ -23,14 +34,14 @@ public class Subtask extends Task {
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
+        if (!super.equals(o)) return false;
         Subtask subtask = (Subtask) o;
-        return super.equals(subtask) &&
-                Objects.equals(epicId, subtask.epicId);
+        return Objects.equals(epicId, subtask.epicId);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, type, name, status, description);
+        return Objects.hash(super.hashCode(), epicId);
     }
 
     @Override
@@ -41,6 +52,8 @@ public class Subtask extends Task {
                 ", name='" + name + '\'' +
                 ", description='" + description + '\'' +
                 ", status='" + status + '\'' +
+                ", startTime='" + startTime + '\'' +
+                ", duration='" + duration + '\'' +
                 '}';
     }
 }

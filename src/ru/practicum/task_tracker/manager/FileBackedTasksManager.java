@@ -11,12 +11,12 @@ import java.util.List;
 
 public class FileBackedTasksManager extends InMemoryTaskTracker {
     private final File dataFile;
-    private final HistoryManager historyManager;
+    //private final HistoryManager historyManager = Managers.getDefaultHistory() ;
 
-    public FileBackedTasksManager(File dataFile, HistoryManager historyManager) {
-        super(historyManager);
+    public FileBackedTasksManager(File dataFile/*, HistoryManager historyManager*/) {
+        //super(historyManager);
         this.dataFile = dataFile;
-        this.historyManager = historyManager;
+        //this.historyManager = historyManager;
     }
 
     public void save() {
@@ -47,7 +47,7 @@ public class FileBackedTasksManager extends InMemoryTaskTracker {
     }
 
     public static FileBackedTasksManager loadFromFile(File file, HistoryManager historyManager) {
-        FileBackedTasksManager manager = new FileBackedTasksManager(file, historyManager);
+        FileBackedTasksManager manager = new FileBackedTasksManager(file/*, historyManager*/);
 
         try (BufferedReader reader = new BufferedReader(new FileReader(file))) {
             reader.readLine();

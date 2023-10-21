@@ -38,6 +38,12 @@ public class InMemoryHistoryManager implements HistoryManager {
         removeNode(node);
     }
 
+    public void removeAll() {
+        first = null;
+        last = null;
+        taskNodeMap.clear();
+    }
+
     public ArrayList<Task> getTasks(){
         ArrayList<Task> tasks = new ArrayList<>();
         Node node = first;

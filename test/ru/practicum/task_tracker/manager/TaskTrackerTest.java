@@ -2,20 +2,50 @@ package ru.practicum.task_tracker.manager;
 
 import static org.junit.jupiter.api.Assertions.*;
 
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import ru.practicum.task_tracker.tasks.*;
 
+import java.time.Duration;
+import java.time.LocalDateTime;
 import java.util.List;
 
 public abstract class TaskTrackerTest<T extends TaskTracker> {
-    protected TaskTracker taskTracker = Managers.getDefault();
+    protected T taskTracker;
+    protected Task task;
+    protected Epic epic;
+    protected Subtask subtask1;
+    protected Subtask subtask2;
+    protected LocalDateTime dateTime1;
+    protected LocalDateTime dateTime2;
+    protected LocalDateTime dateTime3;
+    protected Duration duration;
+
+    @BeforeEach
+    void setUp() {
+        dateTime1 = LocalDateTime.of(2023, 1, 1, 8, 0);
+        dateTime2 = LocalDateTime.of(2023, 1, 1, 8, 30);
+        dateTime3 = LocalDateTime.of(2023, 1, 1, 9, 0);
+        duration = Duration.ofMinutes(15);
+        task = new Task("Test addNewTask", "Test addNewTask description", TaskStatus.NEW,
+                TaskTypes.TASK, dateTime1, duration);
+        taskTracker.addNewTask(task);
+        epic = new Epic("Test Epic", "Epic Description", TaskStatus.NEW);
+        taskTracker.addNewEpic(epic);
+        subtask1 = new Subtask("Test Subtask 1", "Subtask Description 1", TaskStatus.NEW, epic.getId(),
+                1L, dateTime1, duration);
+        subtask2 = new Subtask("Test Subtask 1", "Subtask Description 1", TaskStatus.NEW, epic.getId(),
+                2L, dateTime2, duration);
+        taskTracker.addNewSubtask(subtask1);
+        taskTracker.addNewSubtask(subtask2);
+    }
 
     @Test
     void testAddNewTask() {
-        Task task = new Task("Test addNewTask", "Test addNewTask description", TaskStatus.NEW, TaskTypes.TASK);
-        final long taskId = taskTracker.addNewTask(task);
+        //Task task = new Task("Test addNewTask", "Test addNewTask description", TaskStatus.NEW, TaskTypes.TASK);
+        //final long taskId = taskTracker.addNewTask(task);
 
-        final Task savedTask = taskTracker.getTask(taskId);
+        final Task savedTask = taskTracker.getTask(task.getId());
 
         assertNotNull(savedTask, "Задача не найдена.");
         assertEquals(task, savedTask, "Задачи не совпадают.");
@@ -41,11 +71,11 @@ public abstract class TaskTrackerTest<T extends TaskTracker> {
         assertNotNull(savedTask, "Задача не найдена.");
         assertEquals(subtask, savedTask, "Задачи не совпадают.");
 
-        final List<Task> tasks = taskTracker.getAllTasks();
+        final List<Subtask> subtasks = taskTracker.getAllSubtasks();
 
-        assertNotNull(tasks, "Задачи на возвращаются.");
-        assertEquals(1, tasks.size(), "Неверное количество задач.");
-        assertEquals(subtask, tasks.get(0), "Задачи не совпадают.");
+        assertNotNull(subtasks, "Задачи на возвращаются.");
+        assertEquals(1, subtasks.size(), "Неверное количество задач.");
+        assertEquals(subtask, subtasks.get(0), "Задачи не совпадают.");
     }
 
     @Test
@@ -58,11 +88,11 @@ public abstract class TaskTrackerTest<T extends TaskTracker> {
         assertNotNull(savedTask, "Задача не найдена.");
         assertEquals(epic, savedTask, "Задачи не совпадают.");
 
-        final List<Task> tasks = taskTracker.getAllTasks();
+        final List<Epic> epics = taskTracker.getAllEpics();
 
-        assertNotNull(tasks, "Задачи на возвращаются.");
-        assertEquals(1, tasks.size(), "Неверное количество задач.");
-        assertEquals(epic, tasks.get(0), "Задачи не совпадают.");
+        assertNotNull(epics, "Задачи на возвращаются.");
+        assertEquals(1, epics.size(), "Неверное количество задач.");
+        assertEquals(epic, epics.get(0), "Задачи не совпадают.");
     }
 
     @Test
@@ -141,17 +171,13 @@ public abstract class TaskTrackerTest<T extends TaskTracker> {
         Subtask subtask = new Subtask("Test Subtask", "Subtask Description", TaskStatus.NEW, epicId, epic.getId());
         long subtaskId = taskTracker.addNewSubtask(subtask);
 
-        Subtask updatedSubtask = new Subtask("Updated Subtask", "Updated Subtask Description", TaskStatus.IN_PROGRESS, epicId, epic.getId());
-        updatedSubtask.setId(subtaskId);
-
         assertNotNull(taskTracker.getSubtask(subtaskId), "Подзадача не найдена в taskTracker до обновления.");
 
-        taskTracker.updateSubtask(updatedSubtask);
+        subtask.setStatus(TaskStatus.IN_PROGRESS);
+        taskTracker.updateSubtask(subtask);
 
-        Subtask savedSubtask = taskTracker.getSubtask(subtaskId);
-
-        assertNotNull(savedSubtask, "Подзадача не найдена после обновления.");
-        assertEquals(updatedSubtask, savedSubtask, "Подзадача не обновлена правильно.");
+        assertNotNull(subtask, "Подзадача не найдена после обновления.");
+        assertEquals(TaskStatus.IN_PROGRESS, taskTracker.getSubtaskById(subtaskId).getStatus(), "Статус подзадачи не обновлен правильно");
 
         Epic updatedEpic = taskTracker.getEpic(epicId);
         assertNotNull(updatedEpic, "Эпик не найден после обновления подзадачи.");

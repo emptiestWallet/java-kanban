@@ -8,8 +8,8 @@ import java.io.File;
 public class FileBackedTMTest {
     public static void main(String[] args) {
         File file = new File("tasks.csv");
-        HistoryManager historyManager = new InMemoryHistoryManager();
-        FileBackedTasksManager tasksManager1 = new FileBackedTasksManager(file, historyManager);
+        HistoryManager historyManager = /*new InMemoryHistoryManager()*/ Managers.getDefaultHistory();
+        FileBackedTasksManager tasksManager1 = new FileBackedTasksManager(file/*, historyManager*/);
 
         Task task1 = new Task("TaskName1", "TaskDescription1", TaskStatus.NEW, TaskTypes.TASK);
         Task task2 = new Task("TaskName2", "TaskDescription2", TaskStatus.NEW, TaskTypes.TASK);

@@ -44,4 +44,11 @@ public interface TaskTracker {
     void deleteEpicById(Long epicId);
 
     List<Subtask> getSubtaskByEpic(Long epicId);
+
+    void calculateEpicStartTime(Long epicId);
+
+    void calculateEpicDuration(Long epicId);
+
+
+    void calculateEpicEndTime(Long epicId);
 }
