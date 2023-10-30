@@ -1,5 +1,6 @@
 package ru.practicum.task_tracker.manager;
 
+import ru.practicum.task_tracker.exception.TaskOverlapException;
 import ru.practicum.task_tracker.tasks.Epic;
 import ru.practicum.task_tracker.tasks.Subtask;
 import ru.practicum.task_tracker.tasks.Task;
@@ -32,10 +33,6 @@ public class InMemoryTaskTracker implements TaskTracker {
     public int hashCode() {
         return Objects.hash(tasks, subtasks, epics, generatorId, historyManager);
     }
-
-    /*public InMemoryTaskTracker(HistoryManager historyManager) {
-        this.historyManager = historyManager;
-    }*/
 
     @Override
     public List<Task> getAllTasks() {
@@ -77,6 +74,10 @@ public class InMemoryTaskTracker implements TaskTracker {
 
     @Override
     public long addNewTask(Task task) {
+        if (hasTimeOverlap(task, getAllTasks())) {
+            throw new TaskOverlapException("Данная задача пересекается с другой задачей");
+        }
+
         long id = generateId();
         task.setId(id);
         tasks.put(task.getId(), task);
@@ -93,6 +94,10 @@ public class InMemoryTaskTracker implements TaskTracker {
 
     @Override
     public Long addNewSubtask(Subtask subtask) {
+        if (hasTimeOverlap(subtask, getAllTasks())) {
+            throw new TaskOverlapException("Данная подзадача пересекается с другой подзадачей");
+        }
+
         Epic epic = epics.get(subtask.getEpicId());
         if (epic == null) {
             throw new IllegalArgumentException("Эпик с указанным ID не существует");
@@ -109,6 +114,10 @@ public class InMemoryTaskTracker implements TaskTracker {
 
     @Override
     public void updateTask(Task task) {
+        if (hasTimeOverlap(task, getAllTasks())) {
+            throw new TaskOverlapException("Данная задача пересекается с другой задачей");
+        }
+
         Task savedTask = tasks.get(task.getId());
         if (savedTask == null) {
             System.out.println("Task с id" + task.getId() + " отсутствует");
@@ -120,6 +129,10 @@ public class InMemoryTaskTracker implements TaskTracker {
 
     @Override
     public void updateSubtask(Subtask subtask) {
+        if (hasTimeOverlap(subtask, getAllTasks())) {
+            throw new TaskOverlapException("Данная подзадача пересекается с другой подзадачей");
+        }
+
         Subtask savedSubtask = subtasks.get(subtask.getId());
         if (savedSubtask == null) {
             System.out.println("Subtask с id" + subtask.getId() + " отсутствует");
@@ -333,4 +346,32 @@ public class InMemoryTaskTracker implements TaskTracker {
             }
         }
     }
+
+    public List<Task> getPrioritizedTasks() {
+        Set<Task> sortedTasks = new TreeSet<>(Comparator.comparing(Task::getStartTime,
+                Comparator.nullsLast(Comparator.naturalOrder())));
+
+        sortedTasks.addAll(tasks.values());
+        sortedTasks.addAll((subtasks.values()));
+
+        return new ArrayList<>(sortedTasks);
+    }
+
+    public boolean hasTimeOverlap(Task newTask, List<Task> existingTasks) {
+        for (Task existingTask : existingTasks) {
+            if (newTask.getStartTime() != null && existingTask.getStartTime() != null) {
+                LocalDateTime newTaskEndTime = newTask.getStartTime().plus(newTask.getDuration());
+                LocalDateTime existingTaskEndTime = existingTask.getStartTime().plus(existingTask.getDuration());
+
+                if (!newTaskEndTime.isBefore(existingTask.getStartTime()) &&
+                        !newTask.getStartTime().isAfter(existingTaskEndTime)) {
+                    return true;
+                }
+            }
+        }
+
+        return false;
+    }
+
+
 }

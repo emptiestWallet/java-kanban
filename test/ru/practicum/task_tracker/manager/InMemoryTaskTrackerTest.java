@@ -125,4 +125,50 @@ public class InMemoryTaskTrackerTest extends TaskTrackerTest<InMemoryTaskTracker
         assertEquals(Duration.ofMinutes(50), epic.getDuration(), "Epic duration is not calculated correctly");
         assertEquals(subtaskTime3.plus(subtaskDuration3), epic.getEndTime(), "Epic end time is not calculated correctly");
     }
+
+    @Test
+    void testGetPrioritizedTasks() {
+        LocalDateTime tasksTime = LocalDateTime.of(2023, 1, 1, 7, 30);
+        Duration taskDuration = Duration.ofMinutes(20);
+
+        Task task = new Task("Test Task", "Task Description", TaskStatus.NEW, TaskTypes.TASK, tasksTime,
+                taskDuration);
+        taskTracker.addNewTask(task);
+
+        Epic epic = new Epic("Test Epic", "Epic Description", TaskStatus.NEW);
+        taskTracker.addNewEpic(epic);
+
+        LocalDateTime subtaskTime1 = LocalDateTime.of(2023, 1, 1, 8, 0);
+        LocalDateTime subtaskTime2 = LocalDateTime.of(2023, 1, 1, 8,30);
+        LocalDateTime subtaskTime3 = LocalDateTime.of(2023, 1, 1, 9,0);
+
+        Duration subtaskDuration1 = Duration.ofMinutes(15);
+        Duration subtaskDuration2 = Duration.ofMinutes(10);
+        Duration subtaskDuration3 = Duration.ofMinutes(25);
+
+        Subtask subtask1 = new Subtask("Subtask test", "Subtask Description", TaskStatus.NEW, epic.getId(), 1L,
+                subtaskTime1, subtaskDuration1);
+        Subtask subtask2 = new Subtask("Subtask test", "Subtask Description", TaskStatus.NEW, epic.getId(), 2L,
+                subtaskTime2, subtaskDuration2);
+        Subtask subtask3 = new Subtask("Subtask test", "Subtask Description", TaskStatus.NEW, epic.getId(), 3L,
+                subtaskTime3, subtaskDuration3);
+
+        taskTracker.addNewSubtask(subtask1);
+        taskTracker.addNewSubtask(subtask2);
+        taskTracker.addNewSubtask(subtask3);
+
+        List<Task> prioritizedTasks = taskTracker.getPrioritizedTasks();
+
+        assertEquals(task, prioritizedTasks.get(0));
+        assertEquals(subtask1, prioritizedTasks.get(1));
+        assertEquals(subtask2, prioritizedTasks.get(2));
+        assertEquals(subtask3, prioritizedTasks.get(3));
+
+        task.setStartTime(null);
+        List<Task> updatedPrioritizedTasks = taskTracker.getPrioritizedTasks();
+        assertEquals(subtask1, updatedPrioritizedTasks.get(0));
+        assertEquals(subtask2, updatedPrioritizedTasks.get(1));
+        assertEquals(subtask3, updatedPrioritizedTasks.get(2));
+        assertEquals(task, updatedPrioritizedTasks.get(3));
+    }
 }

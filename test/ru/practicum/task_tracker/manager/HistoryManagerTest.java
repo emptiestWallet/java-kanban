@@ -8,7 +8,6 @@ import ru.practicum.task_tracker.tasks.*;
 import static org.junit.jupiter.api.Assertions.*;
 
 public class HistoryManagerTest {
-    private static TaskTracker taskTracker;
     private static HistoryManager historyManager;
 
     @BeforeEach

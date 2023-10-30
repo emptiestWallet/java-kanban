@@ -49,6 +49,5 @@ public interface TaskTracker {
 
     void calculateEpicDuration(Long epicId);
 
-
     void calculateEpicEndTime(Long epicId);
 }
